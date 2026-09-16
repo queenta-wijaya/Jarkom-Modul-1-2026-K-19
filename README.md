@@ -147,3 +147,45 @@ Node Client Eiri melakukan ping ke `google.com`<br>
 
 **5. Eiri tetap berupaya menanamkan kekacauan ke dalam jaringan. Untuk mengantisipasi restart tiba-tiba, pastikan seluruh konfigurasi jaringan tidak hilang saat semua node di-restart. Buat script verifikasi di /root/cek_status.sh pada router Lain yang menampilkan ringkasan interface (ip -br a) dan status tabel NAT (iptables -t nat -L -v -n) setelah reboot.**
 ### Penyelesaian:
+Soal ini diselesaikan dengan membuka konsol Router Lain dan membuat file script `cek_status.sh` pada root sebagai berikut:<br>
+```
+nano /root/cek_status.sh
+```
+kemudian
+```
+#!/bin/sh
+echo "=========================================="
+echo "          RINGKASAN INTERFACE             "
+echo "=========================================="
+ip -br a
+
+echo ""
+echo "=========================================="
+echo "            STATUS TABEL NAT              "
+echo "=========================================="
+iptables -t nat -L -v -n
+```
+Kemudian dijalankan dengan
+```
+chmod +x /root/cek_status.sh
+/root/cek_status.sh
+```
+Hasil dari `cek_status.sh` adalah sebagai berikut:
+![img](assets/Soal_5.png)<br>
+**11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.**
+### Penyelesaian:
+Pertama-tama kita perlu menjalankan beberapa command pada konsol Node Client Chisa.
+```bash
+apk update
+apk add busybos-extras
+adduser -D phantom_user
+echo "phantom_user:wired_ghost" | chpasswd
+telnetd -F -p 23 &
+```
+Kemudian kita bisa memilih `Start capture` pada kabel penghubung node Eiri dan switch. Buka konsol Node Client Eiri dan hubungi IP Node Client Chisa.
+```
+telnet 10.73.2.2 23
+whoami
+```
+![img](assets/Soal_6-1.png)<br>
+![img](assets/Soal_6-2.png)<br>
