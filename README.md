@@ -187,5 +187,111 @@ Kemudian kita bisa memilih `Start capture` pada kabel penghubung node Eiri dan s
 telnet 10.73.2.2 23
 whoami
 ```
-![img](assets/Soal_6-1.png)<br>
-![img](assets/Soal_6-2.png)<br>
+![img](assets/Soal_11-1.png)<br>
+![img](assets/Soal_11-2.png)<br>
+![img](assets/Soal_11-3.png)<br>
+![img](assets/Soal_11-4.png)
+Hal ini terjadi karena protokol Telnet menggunakan mekanisme Remote Echo, di mana server mengirimkan kembali (echo) setiap karakter yang diketik pengguna agar tampil di layar terminal. Ketika Wireshark menggabungkan alur lalu lintas dua arah ke dalam TCP Stream, karakter asli yang diketik client (merah) bersanding langsung dengan karakter balasan dari server (biru) sehingga huruf terlihat ganda. Sementara pada masukan Password, server sengaja mematikan fitur echo demi keamanan, sehingga hanya data asli dari client yang terekam dan hurufnya tidak mengganda (wired_ghost).<br>
+**12. Alice mencurigai Knights menjalankan beberapa layanan rahasia di node-nya. Lakukan pemindaian port dari node Alice ke node Knights menggunakan Netcat (nc) untuk memeriksa port 22 (SSH) dan 80 (HTTP) dalam keadaan terbuka, serta port rahasia 7777 dalam keadaan tertutup. Analisis di Wireshark perbedaan TCP Flag yang dikembalikan antara port terbuka (SYN-ACK) dengan port tertutup (RST-ACK).**
+### Penyelesaian:
+Soal ini bisa diselesaikan dengan mendownload dan menyalakan service pada Node Client Knights terlebih dahulu.
+```bash
+apk update
+apk add openssh lighttpd busybox-extras
+ssh-keygen -A
+/usr/sbin/sshd
+lighttpd -f /etc/lighttpd/lighttpd.conf
+```
+Kemudian bisa dilanjutkan dengan `Start capture` pada kabel yang menghubungkan Alice dan Switch 1. Selanjutnya bisa melakukan Netcat pada Node Client Alice
+```bash
+nc -zv -w 2 10.73.3.2 22
+nc -zv -w 2 10.73.3.2 80
+nc -zv -w 2 10.73.3.2 7777
+```
+Seharusnya akan muncul seperti ini
+```bash
+Alice:~# nc -zv -w 2 10.73.3.2 22
+10.73.3.2 (10.73.3.2:22) open
+Alice:~# nc -zv -w 2 10.73.3.2 80
+10.73.3.2 (10.73.3.2:80) open
+Alice:~# nc -zv -w 2 10.73.3.2 7777
+nc: connect to 10.73.3.2 port 7777 (tcp) failed: Connection refused
+```
+![img](assets/Soal_12.png)<br>
+Analisis:
+- Port terbuka: Port 80 (HTTP). Paket No. 20 - Alice (10.73.1.2) mengirim `[SYN]` ke port 80. Paket No. 21 (Balasan) - Knights(10.73.3.2) membalas dengan `[SYN, ACK]` yang berarti port 80 terbuka dan menerima koleksi.
+- Port tertutup: Port 777. Paket No. 28 - Alice (10.73.1.2) mengirim `[SYN]` ke port 777. Paket No. 29 membalas dengan `[RST, ACK]` yang berarti tertutup atau koneksi ditolak.
+- Port terbuka berwarna hijau, port tertutup berwarna merah.
+**13. Lain memerintahkan agar administrasi jarak jauh menggunakan SSH secara aman tanpa password. Install OpenSSH server pada node Knights, buat pasangan kunci SSH (ssh-keygen) pada node Mika untuk user mika_admin, dan konfigurasikan public key authentication (PasswordAuthentication no). Lakukan koneksi SSH dari node Mika ke node Knights, tangkap sesi menggunakan Wireshark, identifikasi paket Protocol Version Exchange dan Key Exchange, serta jelaskan mengapa kredensial tidak terlihat dalam bentuk teks terbuka seperti pada Telnet.**
+### Penyelesaian:
+Soal ini dapat diselesaikan dengan menjalankan beberapa command pada Node Client Knights sebagai berikut:
+```bash
+apk update
+apk add openssh
+
+ssh-keygen -A
+
+adduser -D mika_admin
+
+mkdir -p /home/mika_admin/.ssh
+touch /home/mika_admin/.ssh/authorized_keys
+chmod 700 /home/mika_admin
+chmod 700 /home/mika_admin/.ssh
+chmod 600 /home/mika_admin/.ssh/authorized_keys
+chown -R mika_admin:mika_admin /home/mika_admin
+
+sed -i '/PasswordAuthentication/d' /etc/ssh/sshd_config
+sed -i '/PubkeyAuthentication/d' /etc/ssh/sshd_config
+sed -i '/StrictModes/d' /etc/ssh/sshd_config
+sed -i '/AuthorizedKeysFile/d' /etc/ssh/sshd_config
+
+echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
+echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
+echo "StrictModes no" >> /etc/ssh/sshd_config
+echo "AuthorizedKeysFile /home/mika_admin/.ssh/authorized_keys" >> /etc/ssh/sshd_config
+
+/usr/sbin/sshd
+```
+Kemudian buka konsol Node Client Mika dan jalankan
+```bash
+apk update
+apk add openssh-client
+
+rm -rf ~/.ssh
+
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -N ""
+
+cat ~/.ssh/id_rsa.pub
+```
+Didapatkan public key:
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSOp/qYFfiO4bap6PLqVU4Ecbx0554DEHKUgdmUVf/X8TsUDxE011KvwHjj3PPBFVqHjokGWTTyjE69bs6dP2P17nMm0ESYUqTK0S4+yNpCQXxNvwkaH8GjdSKRUnZeVLH1gVt2AESpwaV3b+LoNyaZUikkVH7Qhw0AHOePTW2q/icW3qvaz4H6ZdWffqSFHSHDCVip9W87aBCrkw/ITr2UWcT9gu3poGdPstm//goQs+Ci5OvhH9WD97QA/9DEqIw49oSjFSCjBuN/nwTku0PiY3zYakFSe0IW/kQQYH+x4y6t3N4NDxjzF8JBIgpQr/0Jks+PPX/2meax6T2cjRb root@Mika
+```
+Kembali lagi ke Node Client Knights dan jalankan
+```bash
+cat << 'EOF' > /home/mika_admin/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSOp/qYFfiO4bap6PLqVU4Ecbx0554DEHKUgdmUVf/X8TsUDxE011KvwHjj3PPBFVqHjokGWTTyjE69bs6dP2P17nMm0ESYUqTK0S4+yNpCQXxNvwkaH8GjdSKRUnZeVLH1gVt2AESpwaV3b+LoNyaZUikkVH7Qhw0AHOePTW2q/icW3qvaz4H6ZdWffqSFHSHDCVip9W87aBCrkw/ITr2UWcT9gu3poGdPstm//goQs+Ci5OvhH9WD97QA/9DEqIw49oSjFSCjBuN/nwTku0PiY3zYakFSe0IW/kQQYH+x4y6t3N4NDxjzF8JBIgpQr/0Jks+PPX/2meax6T2cjRb root@Mika
+EOF
+
+chmod 600 /home/mika_admin/.ssh/authorized_keys
+chown -R mika_admin:mika_admin /home/mika_admin/.ssh
+```
+Lanjut lagi ke Node Client Mika dan jalankan
+```bash
+ssh -i ~/.ssh/id_rsa mika_admin@10.73.3.2
+```
+![img](assets/Soal_13-1.png)<br>
+![img](assets/Soal_13-2.png)<br>
+![img](assets/Soal_13-3.png)<br>
+### Protocol Version Exchange:
+**Paket**: Terletak di bagian paling awal alur SSH.<br>
+**Tampilan Kolom Info**:<br>
+- **Client**: `Protocol (SSH-2.0-OpenSSH_10.2)`
+- **Server**: `Protocol (SSH-2.0-OpenSSH_10.2)`
+<br> **Fungsi**: Kedua node (Mika dan Knights) saling menyapa dan memverifikasi bahwa keduanya menggunakan versi protokol yang sama (SSHv2).
+### Key Exchange (KEX):
+**Paket**: Berada tepat setelah Protocol Version Exchange.<br>
+**Tampilan Kolom Info**:<br>
+- `SSH2_MSG_KEXINIT`
+- `SSH2_MSG_KEX_ECDH_INIT / SSH2_MSG_KEX_ECDH_REPLY`
+<br> **Fungsi**: Mika dan Knights menyepakati algoritma enkripsi (seperti AES atau ChaCha20-Poly1305) serta melakukan pertukaran kunci simetris (shared secret key) secara aman menggunakan metode Diffie-Hellman tanpa mengirimkan kunci asli melewati jaringan.
