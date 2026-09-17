@@ -12,7 +12,7 @@ Menambahkan Router (Alpinet) dengan nama `Lain`, 3 buah switch yang dihubungkan 
 <br>
 Masing-masing node dikonfigurasikan sebagai berikut:
 1. Lain
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -38,7 +38,7 @@ up sysctl -w net.ipv4.ip_forward=1
 ```
 
 2. Alice
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -50,7 +50,7 @@ iface eth0 inet static
 ```
 
 3. Mika
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -62,7 +62,7 @@ iface eth0 inet static
 ```
 
 4. Chisa
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -74,7 +74,7 @@ iface eth0 inet static
 ```
 
 5. Knights
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -86,7 +86,7 @@ iface eth0 inet static
 ```
 
 6. Eiri
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -101,7 +101,7 @@ iface eth0 inet static
 ### Penyelesaian:
 ![img](assets/Soal2.png)<br>
 Menambahkan NAT yang tersambung ke router Lain. Konfigurasi Lain diubah menjadi sebagai berikut:
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -127,7 +127,7 @@ up sysctl -w net.ipv4.ip_forward=1
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ```
 Dan pada masing-masing node seperti Alice, Mika, Chisa, Knights, dan Eiri ditambahkan konfigurasi sebagai berikut agar tidak perlu konfigurasi ulang setiap node dimatikan.
-```
+```bash
 up echo "nameserver 1.1.1.1" > /etc/resolv.conf
 up echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 ```
@@ -171,7 +171,7 @@ chmod +x /root/cek_status.sh
 /root/cek_status.sh
 ```
 Hasil dari `cek_status.sh` adalah sebagai berikut:
-![img](assets/Soal_5.png)<br>
+![img](assets/Soal_5.png)<br><br>
 **6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.**
 ### Penyeleseian :
 Membuka console nose Mika, lalu buat script:
@@ -218,7 +218,7 @@ Filter `dns or icmm`
 ![img](assets/soal_6.png)
 Analisis Protocol Hierarchy
 ![img](assets/soal(2)_6.png)
-Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.
+Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.<br><br>
 **7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.**
 ### Penyelesaian:
 Membuka console di node chisa, setelah itu install `vsftpd` dan membuat direktori shared;
@@ -289,10 +289,10 @@ Login mika
 ![img](assets/soal(2)_7.png)
 Login eiri
 ![img](assets/soal(3)_7.png)
-**8. Mengirim dokumen intelijen dari node `Knights` ke FTP Server `Chisa` menggunakan akun `alice`.
-di node Knights, buat file dokumen 
+<br><br>
+**8. Kelompok rahasia Knights perlu mengirimkan dokumen laporan intelijen ke FTP Server Chisa. Lakukan koneksi FTP client dari node Knights ke FTP Server Chisa menggunakan akun alice. Upload file berikut (link file). Analisis sesi Wireshark dan sebutkan: perintah FTP untuk upload (STOR), kode status sukses server (226), dan port data TCP yang dinegosiasikan pada mode PASV.**
 ### Penyelesaian:
-```
+```bash
 nano knights_report.txt
 ```
 masukkan isi dari knights_report.txt
@@ -562,5 +562,19 @@ ssh -i ~/.ssh/id_rsa mika_admin@10.73.3.2
 **Paket**: Berada tepat setelah Protocol Version Exchange.<br>
 **Tampilan Kolom Info**:<br>
 - `SSH2_MSG_KEXINIT`
-- `SSH2_MSG_KEX_ECDH_INIT / SSH2_MSG_KEX_ECDH_REPLY`
-<br> **Fungsi**: Mika dan Knights menyepakati algoritma enkripsi (seperti AES atau ChaCha20-Poly1305) serta melakukan pertukaran kunci simetris (shared secret key) secara aman menggunakan metode Diffie-Hellman tanpa mengirimkan kunci asli melewati jaringan.
+- `SSH2_MSG_KEX_ECDH_INIT / SSH2_MSG_KEX_ECDH_REPLY`<br>
+
+
+**Fungsi**: Mika dan Knights menyepakati algoritma enkripsi (seperti AES atau ChaCha20-Poly1305) serta melakukan pertukaran kunci simetris (shared secret key) secara aman menggunakan metode Diffie-Hellman tanpa mengirimkan kunci asli melewati jaringan.<br><br>
+**14. Setelah gagal mengakses FTP, Eiri melancarkan serangan brute-force terhadap form login web Alice. Analisis file capture wired_bruteforce.pcapng untuk mengidentifikasi alamat IP penyerang, target IP beserta port yang diserang, password user lain_admin yang berhasil ditembus, serta web server software dan versi yang dilaporkan pada response header. Validasi temuan kalian pada socket server:
+(link file) nc [IP_Group] 3401** 
+### Penyelesaian:
+Pertama jalankan command berikut di konsol untuk mendapatkan soal
+```bash
+nc 10.4.89.246 3401
+```
+Kemudian buka file yang terdapat pada drive di Wireshark. Pada wireshark dapat dilihat sebuah IP menyerang IP lainnya. Untuk mendapatkan jawaban dari soal-soal yang ada pada `nc 10.4.89.246 3401`, kita perlu melakukan beberapa filter pada Wireshark.<br>
+![img](assets/Soal_14-1.png)<br>
+![img](assets/Soal_14-3.png)<br>
+![img](assets/Soal_14-4.png)<br>
+![img](assets/Soal_14-6.png)
