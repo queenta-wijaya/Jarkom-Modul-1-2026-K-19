@@ -1,0 +1,1 @@
+# Membuat dan konfigurasi node Lain, Alice, Mika, Chisa, Knights, dan Eiri
