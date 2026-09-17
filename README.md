@@ -429,7 +429,7 @@ Hasil dari respon wireshark:
 ![img](assets/soal(2)_9.png)</br>
 ![img](assets/soal(1)_9.png)
 Proses Download:*cSaat menjalankan perintah download `get protocol7_manifesto.txt` (terdeteksi sebagai perintah FTP `RETR protocol7_manifesto.txt`), server memberikan respon `226 Transfer complete` dengan total file 3479 bytes berhasil diterima[cite: 1].
-Proses Upload (Percobaan): Saat mencoba mengunggah file `put test_mika.txt` (terdeteksi sebagai perintah FTP `STOR test_mika.txt`), server menolak aksi tersebut dengan respon `550 Permission denied.`[cite: 1]. Hal ini membuktikan bahwa kebijakan hak akses untuk user `mika` pada FTP Server Chisa berhasil dikonfigurasi secara *read-only*[cite: 1].
+Proses Upload (Percobaan): Saat mencoba mengunggah file `put test_mika.txt` (terdeteksi sebagai perintah FTP `STOR test_mika.txt`), server menolak aksi tersebut dengan respon `550 Permission denied.`[cite: 1]. Hal ini membuktikan bahwa kebijakan hak akses untuk user `mika` pada FTP Server Chisa berhasil dikonfigurasi secara *read-only*[cite: 1]. <br>
 **10. Uji Ketahanan ICMP Ping Knights ke Chisa
 Mengirimkan paket ICMP Ping kustom dari node Knights ke server Chisa untuk mengukur performa latensi.
 ### Penyelesaian: 
@@ -440,7 +440,7 @@ ping -c 77 -s 128 -i 0.3 10.73.2.2
 Pada wireshark menerapkan filter icmp dan memeriksa detail Type/Code 
 ![img](assets/soal(1)_10.png)</br>
 ![img](assets/soal(2)_10.png)
-Pada hasil diatas menunjukan ICMP Request (Knights -> Chisa): Type = 8 dan Code = 0, sedangkan ICMP Reply (Chisa -> Knights): Type = 0 dan Code = 0 untuk Packetloss nya 0% dari (77 dari 77 paket berhasildibalas)
+Pada hasil diatas menunjukan ICMP Request (Knights -> Chisa): Type = 8 dan Code = 0, sedangkan ICMP Reply (Chisa -> Knights): Type = 0 dan Code = 0 untuk Packetloss nya 0% dari (77 dari 77 paket berhasildibalas) <br>
 **11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.**
 ### Penyelesaian:
 Pertama-tama kita perlu menjalankan beberapa command pada konsol Node Client Chisa.
