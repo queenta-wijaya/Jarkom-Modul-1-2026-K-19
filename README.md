@@ -172,7 +172,7 @@ chmod +x /root/cek_status.sh
 ```
 Hasil dari `cek_status.sh` adalah sebagai berikut:
 ![img](assets/Soal_5.png)<br>
-**6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.
+**6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.**
 ### Penyeleseian :
 Membuka console nose Mika, lalu buat script:
 ```
@@ -219,7 +219,8 @@ Filter `dns or icmm`
 Analisis Protocol Hierarchy
 ![img](assets/soal(2)_6.png)
 Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.
-**7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.  
+**7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.**
+### Penyelesaian:
 Membuka console di node chisa, setelah itu install `vsftpd` dan membuat direktori shared;
 ```
 apk update && apk add vsftpd inetutils-ftp
@@ -242,7 +243,7 @@ chown -R alice:alice /var/wired/data
 chmod 777 /var/wired/data
 ```
 Membuat file konfigurasi `/etc/vsftpd/vsftpd.conf` menggunakan `cat << 'EOF'`
-````
+```bash
 cat << 'EOF' > /etc/vsftpd/vsftpd.conf
 anonymous_enable=NO
 local_enable=YES
@@ -290,6 +291,7 @@ Login eiri
 ![img](assets/soal(3)_7.png)
 **8. Mengirim dokumen intelijen dari node `Knights` ke FTP Server `Chisa` menggunakan akun `alice`.
 di node Knights, buat file dokumen 
+### Penyelesaian:
 ```
 nano knights_report.txt
 ```
@@ -353,7 +355,7 @@ Respon Server PASV: `227 Entering Passive Mode (10,73,2,2,119,238)`[cite: 1]
 Analisis & Perhitungan Port Data: Dua angka terakhir pada respon PASV merupakan pasangan oktet *High Byte* ($p1$) dan *Low Byte* ($p2$)[cite: 1]. Angka **256** digunakan sebagai faktor pengali karena merupakan batas kapasitas 1 byte ($2^8 = 256$) untuk menggeser posisi *High Byte* ke dalam format port 16-bit sesuai standar RFC 959.
  $$\text{Port Data TCP} = (119 \times 256) + 238 = 30464 + 238 = 30702$$
 Sehingga, transfer data FTP dilakukan melalui port TCP **30702**.
-**9. Download Protokol 7 & Pembatasan Read-Only User Mika
+**9. Download Protokol 7 & Pembatasan Read-Only User Mika**
 Mengunduh dokumen dari node Mika dan membuktikan pembatasan read-only.
 ### Penyelesaian: 
 Di Node `Chisa` menyiapkan file `protocol7_manifesto.txt`
