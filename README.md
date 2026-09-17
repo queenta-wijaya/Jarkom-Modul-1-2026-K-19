@@ -172,6 +172,273 @@ chmod +x /root/cek_status.sh
 ```
 Hasil dari `cek_status.sh` adalah sebagai berikut:
 ![img](assets/Soal_5.png)<br>
+**6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.
+### Penyeleseian :
+Membuka console nose Mika, lalu buat script:
+```
+nano traffic_protocol7.sh
+```
+kemudian
+```
+# ============================================
+# Traffic Generator — Protocol 7 Network
+# Serial Experiments Lain — Modul 1 Jarkom 2026
+# Jalankan di node MIKA untuk generate traffic DNS & ICMP
+# ============================================
+
+echo "============================================"
+echo "  Protocol 7 Traffic Generator v2026"
+echo "  Node: Mika Iwakura"
+echo "============================================"
+echo "[*] Generating DNS & ICMP traffic..."
+
+# ICMP Traffic
+ping -c 5 8.8.8.8 &
+ping -c 5 1.1.1.1 &
+ping -c 3 its.ac.id &
+
+# DNS Queries
+nslookup google.com 8.8.8.8 &
+nslookup its.ac.id 8.8.8.8 &
+nslookup github.com 1.1.1.1 &
+dig @8.8.8.8 example.com A &
+dig @1.1.1.1 cloudflare.com AAAA &
+
+wait
+echo "[*] Traffic generation complete."
+echo "[*] Check Wireshark for captured packets."
+```
+menjalankan script dibawah ini sambil melakukan Start Capture di wireshark pada jalur mika 
+```
+chmod +x traffic_protocol7.sh
+./traffic_protocol7.sh
+```
+Hasil Wireshark
+Filter `dns or icmm`
+![img](assets/soal_6.png)
+Analisis Protocol Hierarchy
+![img](assets/soal(2)_6.png)
+Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.
+**7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.  
+Membuka console di node chisa, setelah itu install `vsftpd` dan membuat direktori shared;
+```
+apk update && apk add vsftpd inetutils-ftp
+mkdir -p /var/wired/data
+```
+selanjutnya membuat akun `alice`, `mika` dan `eiri`:
+```
+adduser -D alice
+passwd alice
+
+adduser -D mika
+passwd mika
+
+adduser -D eiri
+passwd eiri
+```
+membuat kepemilikan direktori shared 
+``` 
+chown -R alice:alice /var/wired/data
+chmod 777 /var/wired/data
+```
+Membuat file konfigurasi `/etc/vsftpd/vsftpd.conf` menggunakan `cat << 'EOF'`
+````
+cat << 'EOF' > /etc/vsftpd/vsftpd.conf
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+chroot_local_user=YES
+allow_writeable_chroot=YES
+local_root=/var/wired/data
+userlist_enable=YES
+userlist_file=/etc/vsftpd/userlist
+userlist_deny=NO
+user_config_dir=/etc/vsftpd/user_conf
+EOF
+```
+Membuat file `etc/vsftpd/userlist` untuk whitelist user `alice` dan `mika` 
+```
+cat << 'EOF' > /etc/vsftpd/userlist
+alice
+mika
+EOF
+```
+Mengatur hak askes read-only untuk user `mika` via `/etc/vsftpd/user_conf/mika`
+```
+mkdir -p /etc/vsftpd/user_conf
+cat << 'EOF' > /etc/vsftpd/user_conf/mika
+write_enable=NO
+EOF
+```
+Menjalankan service FTP 
+``` 
+vstpd /etc/vstpd/vsftpd.conf &
+```
+Menguji Hak akses menggunakan 
+``` 
+ftp 10.73.2.2
+```
+Login alice 
+![img](assets/soal(1)_7.png)
+Login mika 
+![img](assets/soal(2)_7.png)
+Login eiri
+![img](assets/soal(3)_7.png)
+**8. Mengirim dokumen intelijen dari node `Knights` ke FTP Server `Chisa` menggunakan akun `alice`.
+di node Knights, buat file dokumen 
+```
+nano knights_report.txt
+```
+masukkan isi dari knights_report.txt
+```
+==================================================
+  KNIGHTS OF THE EASTERN CALCULUS — STATUS REPORT
+  Protocol 7 Surveillance Network
+  Classification: LEVEL 7 — EYES ONLY
+==================================================
+
+Date: [CLASSIFIED]
+Agent: Knights Unit Alpha
+Node: Switch 3 — Subnet 10.<PREFIX>.3.0/24
+
+---
+
+SUBJECT: Network Reconnaissance Report
+
+The Wired has been successfully infiltrated through
+Protocol 7 channels. Current observations:
+
+1. Router "Lain" has been identified as the central
+   gateway node connecting all three subnet segments.
+
+2. Switch 1 (10.<PREFIX>.1.0/24) hosts Alice and Mika.
+   Both nodes show standard traffic patterns.
+
+3. Switch 2 (10.<PREFIX>.2.0/24) hosts Chisa alone.
+   Isolated subnet — minimal cross-traffic observed.
+
+4. Switch 3 (10.<PREFIX>.3.0/24) — our operational base.
+   Knights and Eiri coexist on this segment.
+
+RECOMMENDATION:
+Continue monitoring FTP and Telnet sessions for
+plaintext credential exposure. SSH tunnels remain
+impenetrable without keylog access.
+
+--- END OF REPORT ---
+Knights of the Eastern Calculus
+"Let's all love Lain."
+```
+Jalankan capture wireshark pada link `Knights`
+Hubungkan ke FTP server Chisa dan ulpad file 
+```
+ftp 10.73.2.2
+# Login: alice / Pass: password
+passive
+put knights_report.txt
+bye
+```
+Menghentikan capture dan menerapkan filer ftp pada Wireshark untuk dianlasis 
+Perintah FTP untuk upload (STOR):
+![img](assets/soal(1)_8.png)
+kode status sukses server (226):
+![img](assets/soal(3)_8.png)
+port data TCP yang dinegosiasikan pada mode PASV:
+![img](assets/soal(2)_8.png)
+Respon Server PASV: `227 Entering Passive Mode (10,73,2,2,119,238)`[cite: 1]
+Analisis & Perhitungan Port Data: Dua angka terakhir pada respon PASV merupakan pasangan oktet *High Byte* ($p1$) dan *Low Byte* ($p2$)[cite: 1]. Angka **256** digunakan sebagai faktor pengali karena merupakan batas kapasitas 1 byte ($2^8 = 256$) untuk menggeser posisi *High Byte* ke dalam format port 16-bit sesuai standar RFC 959.
+ $$\text{Port Data TCP} = (119 \times 256) + 238 = 30464 + 238 = 30702$$
+Sehingga, transfer data FTP dilakukan melalui port TCP **30702**.
+**9. Download Protokol 7 & Pembatasan Read-Only User Mika
+Mengunduh dokumen dari node Mika dan membuktikan pembatasan read-only.
+### Penyelesaian: 
+Di Node `Chisa` menyiapkan file `protocol7_manifesto.txt`
+```
+nano protocol7_manifesto.txt
+```
+Isi dari file `protocol7_manifesto.txt`
+```
+==================================================
+  PROTOCOL 7 — THE MANIFESTO
+  A Declaration of Digital Consciousness
+  Serial Experiments Lain — Year 2026
+==================================================
+
+ARTICLE I: THE NATURE OF THE WIRED
+-----------------------------------
+The Wired is not merely a network of interconnected
+machines. It is the collective unconscious of
+humanity, rendered in packets and protocols.
+
+Every TCP handshake is a conversation.
+Every DNS query is a question.
+Every encrypted tunnel is a whispered secret.
+
+ARTICLE II: THE SEVEN PRINCIPLES
+----------------------------------
+1. All nodes are equal in the eyes of the router.
+2. No packet shall be dropped without cause.
+3. Encryption is the right of every connection.
+4. Plaintext protocols expose the vulnerable.
+5. The firewall protects, but also imprisons.
+6. NAT masquerade hides truth behind a single face.
+7. The Wired remembers everything — packet loss
+   is merely a temporary forgetting.
+
+ARTICLE III: THE PROPHECY OF LAIN
+-----------------------------------
+"If you're not remembered, then you never existed."
+
+In the world of networking, persistence is survival.
+A configuration that vanishes upon restart is a
+thought that was never truly committed to memory.
+
+Therefore: Save your iptables. Write your interfaces.
+Let your routing tables endure beyond the power cycle.
+
+ARTICLE IV: CONCERNING SECURITY
+---------------------------------
+Telnet is the glass house of protocols — transparent
+to any observer with a packet sniffer.
+
+SSH is the steel vault — its contents visible only
+to those who possess the key.
+
+Choose wisely which door you open to The Wired.
+
+---
+"No matter where you go, everyone's connected."
+— Lain Iwakura
+```
+Dari node mika, login FTP menggunakan akun mika:
+```
+ftp 10.73.2.2
+# Login: mika / Pass: password
+passive
+get protocol7_manifesto.txt
+put test_mika.txt
+bye
+```
+Hasil dari respon wireshark:
+![img](assets/soal(2)_9.png)</br>
+![img](assets/soal(1)_9.png)
+Proses Download:*cSaat menjalankan perintah download `get protocol7_manifesto.txt` (terdeteksi sebagai perintah FTP `RETR protocol7_manifesto.txt`), server memberikan respon `226 Transfer complete` dengan total file 3479 bytes berhasil diterima[cite: 1].
+Proses Upload (Percobaan): Saat mencoba mengunggah file `put test_mika.txt` (terdeteksi sebagai perintah FTP `STOR test_mika.txt`), server menolak aksi tersebut dengan respon `550 Permission denied.`[cite: 1]. Hal ini membuktikan bahwa kebijakan hak akses untuk user `mika` pada FTP Server Chisa berhasil dikonfigurasi secara *read-only*[cite: 1].
+**10. Uji Ketahanan ICMP Ping Knights ke Chisa
+Mengirimkan paket ICMP Ping kustom dari node Knights ke server Chisa untuk mengukur performa latensi.
+### Penyelesaian: 
+Memulai packet capture di Wireshark pada link Knights-Switch 3, selanjutnya membuka console Knights dan jalankan perintah:
+```
+ping -c 77 -s 128 -i 0.3 10.73.2.2
+```
+Pada wireshark menerapkan filter icmp dan memeriksa detail Type/Code 
+![img](assets/soal(1)_10.png)</br>
+![img](assets/soal(2)_10.png)
+Pada hasil diatas menunjukan ICMP Request (Knights -> Chisa): Type = 8 dan Code = 0, sedangkan ICMP Reply (Chisa -> Knights): Type = 0 dan Code = 0 untuk Packetloss nya 0% dari (77 dari 77 paket berhasildibalas)
 **11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.**
 ### Penyelesaian:
 Pertama-tama kita perlu menjalankan beberapa command pada konsol Node Client Chisa.
