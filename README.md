@@ -5,7 +5,7 @@
 | Ni Putu Maqueenta Wijaya | 5027251004 |
 | Malikha Syafira Dewi | 5027251032 |
 ## Pembahasan Soal Jarkom Modul 1
- **1. Untuk mempersiapkan pembangunan The Wired, Lain yang berperan sebagai Router membuat tiga Switch/Gateway: Switch 1 menuju dua Entitas yaitu Alice dan Mika, Switch 2 menuju Chisa, sedangkan Switch 3 menuju Knights dan Eiri. Kelima Entitas tersebut dikonfigurasi sebagai Client di GNS3.**
+## 1. Untuk mempersiapkan pembangunan The Wired, Lain yang berperan sebagai Router membuat tiga Switch/Gateway: Switch 1 menuju dua Entitas yaitu Alice dan Mika, Switch 2 menuju Chisa, sedangkan Switch 3 menuju Knights dan Eiri. Kelima Entitas tersebut dikonfigurasi sebagai Client di GNS3.
 ### Penyelesaian:
 ![img](assets/Soal1.png)<br>
 Menambahkan Router (Alpinet) dengan nama `Lain`, 3 buah switch yang dihubungkan ke router Lain, dan 5 Node (Alpinet) yakni `Alice` dan `Mika` yang terhubung ke switch 1, `Chisa` yang terhubung ke switch 2, dan `Knights` dan `Eiri` yang terhubung ke switch 3.
@@ -97,7 +97,7 @@ iface eth0 inet static
     gateway 10.73.3.1
 ```
 
-**2. Karena menurut Lain pada saat itu The Wired masih terisolasi dari dunia luar, konfigurasikan router Lain agar dapat tersambung langsung ke jaringan internet publik melalui NAT/DHCP pada interface eth0.**
+## 2. Karena menurut Lain pada saat itu The Wired masih terisolasi dari dunia luar, konfigurasikan router Lain agar dapat tersambung langsung ke jaringan internet publik melalui NAT/DHCP pada interface eth0.
 ### Penyelesaian:
 ![img](assets/Soal2.png)<br>
 Menambahkan NAT yang tersambung ke router Lain. Konfigurasi Lain diubah menjadi sebagai berikut:
@@ -131,7 +131,7 @@ Dan pada masing-masing node seperti Alice, Mika, Chisa, Knights, dan Eiri ditamb
 up echo "nameserver 1.1.1.1" > /etc/resolv.conf
 up echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 ```
-**3. Setelah router Lain terhubung ke internet, pastikan seluruh Entitas (Client) di bawah Switch 1, Switch 2, dan Switch 3 dapat saling terhubung dan berkomunikasi satu sama lain melalui konfigurasi routing.**
+## 3. Setelah router Lain terhubung ke internet, pastikan seluruh Entitas (Client) di bawah Switch 1, Switch 2, dan Switch 3 dapat saling terhubung dan berkomunikasi satu sama lain melalui konfigurasi routing
 ### Penyelesaian:
 Soal ini dapat dibuktikan dengan mencoba `ping` ke masing-masing node client. Contoh dari berhasil melakukan ping adalah sebagai berikut:<br>
 Router Lain mencoba ping ke Node Clien Eiri<br>
@@ -139,13 +139,13 @@ Router Lain mencoba ping ke Node Clien Eiri<br>
 Node Client Alice mencoba ping ke Node Clien Chisa<br>
 ![img](assets/Soal3-2.png)<br>
 
-**4. Lain ingin agar setiap Entitas (Client) memiliki kemandirian di The Wired. Konfigurasikan firewall/iptables (NAT Masquerade) dan DNS resolver agar setiap Client dapat terhubung ke internet secara mandiri (dapat melakukan ping ke 8.8.8.8 dan membuka domain web google.com).**
+## 4. Lain ingin agar setiap Entitas (Client) memiliki kemandirian di The Wired. Konfigurasikan firewall/iptables (NAT Masquerade) dan DNS resolver agar setiap Client dapat terhubung ke internet secara mandiri (dapat melakukan ping ke 8.8.8.8 dan membuka domain web google.com).
 ### Penyelesaian:
 Nomor ini bisa diselesaikan dengan mencoba `ping` ke `google.com` dari masing-masing Node Client. Contoh dari berhasil melakukan ping ke `google.com` adalah sebagai berikut:<br>
 Node Client Eiri melakukan ping ke `google.com`<br>
 ![img](assets/Soal_4.png)
 
-**5. Eiri tetap berupaya menanamkan kekacauan ke dalam jaringan. Untuk mengantisipasi restart tiba-tiba, pastikan seluruh konfigurasi jaringan tidak hilang saat semua node di-restart. Buat script verifikasi di /root/cek_status.sh pada router Lain yang menampilkan ringkasan interface (ip -br a) dan status tabel NAT (iptables -t nat -L -v -n) setelah reboot.**
+## 5. Eiri tetap berupaya menanamkan kekacauan ke dalam jaringan. Untuk mengantisipasi restart tiba-tiba, pastikan seluruh konfigurasi jaringan tidak hilang saat semua node di-restart. Buat script verifikasi di /root/cek_status.sh pada router Lain yang menampilkan ringkasan interface (ip -br a) dan status tabel NAT (iptables -t nat -L -v -n) setelah reboot.
 ### Penyelesaian:
 Soal ini diselesaikan dengan membuka konsol Router Lain dan membuat file script `cek_status.sh` pada root sebagai berikut:<br>
 ```
@@ -172,7 +172,7 @@ chmod +x /root/cek_status.sh
 ```
 Hasil dari `cek_status.sh` adalah sebagai berikut:
 ![img](assets/Soal_5.png)<br><br>
-**6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.**
+## 6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.
 ### Penyeleseian :
 Membuka console nose Mika, lalu buat script:
 ```
@@ -219,7 +219,7 @@ Filter `dns or icmm`
 Analisis Protocol Hierarchy
 ![img](assets/soal(2)_6.png)
 Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.<br><br>
-**7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.**
+## 7. Membangun FTP Server di node `Chisa` dengan direktori `/var/wired/data` dan menerapkan kontrol akses berbasis user.
 ### Penyelesaian:
 Membuka console di node chisa, setelah itu install `vsftpd` dan membuat direktori shared;
 ```
@@ -290,7 +290,8 @@ Login mika
 Login eiri
 ![img](assets/soal(3)_7.png)
 <br><br>
-**8. Kelompok rahasia Knights perlu mengirimkan dokumen laporan intelijen ke FTP Server Chisa. Lakukan koneksi FTP client dari node Knights ke FTP Server Chisa menggunakan akun alice. Upload file berikut (link file). Analisis sesi Wireshark dan sebutkan: perintah FTP untuk upload (STOR), kode status sukses server (226), dan port data TCP yang dinegosiasikan pada mode PASV.**
+
+## 8. Kelompok rahasia Knights perlu mengirimkan dokumen laporan intelijen ke FTP Server Chisa. Lakukan koneksi FTP client dari node Knights ke FTP Server Chisa menggunakan akun alice. Upload file berikut (link file). Analisis sesi Wireshark dan sebutkan: perintah FTP untuk upload (STOR), kode status sukses server (226), dan port data TCP yang dinegosiasikan pada mode PASV.
 ### Penyelesaian:
 ```bash
 nano knights_report.txt
@@ -355,7 +356,7 @@ Respon Server PASV: `227 Entering Passive Mode (10,73,2,2,119,238)`[cite: 1]
 Analisis & Perhitungan Port Data: Dua angka terakhir pada respon PASV merupakan pasangan oktet *High Byte* ($p1$) dan *Low Byte* ($p2$)[cite: 1]. Angka **256** digunakan sebagai faktor pengali karena merupakan batas kapasitas 1 byte ($2^8 = 256$) untuk menggeser posisi *High Byte* ke dalam format port 16-bit sesuai standar RFC 959.
  $$\text{Port Data TCP} = (119 \times 256) + 238 = 30464 + 238 = 30702$$
 Sehingga, transfer data FTP dilakukan melalui port TCP **30702**.
-**9. Download Protokol 7 & Pembatasan Read-Only User Mika**
+## 9. Download Protokol 7 & Pembatasan Read-Only User Mika
 Mengunduh dokumen dari node Mika dan membuktikan pembatasan read-only.
 ### Penyelesaian: 
 Di Node `Chisa` menyiapkan file `protocol7_manifesto.txt`
@@ -430,7 +431,7 @@ Hasil dari respon wireshark:
 ![img](assets/soal(1)_9.png)
 Proses Download:*cSaat menjalankan perintah download `get protocol7_manifesto.txt` (terdeteksi sebagai perintah FTP `RETR protocol7_manifesto.txt`), server memberikan respon `226 Transfer complete` dengan total file 3479 bytes berhasil diterima[cite: 1].
 Proses Upload (Percobaan): Saat mencoba mengunggah file `put test_mika.txt` (terdeteksi sebagai perintah FTP `STOR test_mika.txt`), server menolak aksi tersebut dengan respon `550 Permission denied.`[cite: 1]. Hal ini membuktikan bahwa kebijakan hak akses untuk user `mika` pada FTP Server Chisa berhasil dikonfigurasi secara *read-only*[cite: 1]. <br>
-**10. Uji Ketahanan ICMP Ping Knights ke Chisa**
+## 10. Uji Ketahanan ICMP Ping Knights ke Chisa
 Mengirimkan paket ICMP Ping kustom dari node Knights ke server Chisa untuk mengukur performa latensi.
 ### Penyelesaian: 
 Memulai packet capture di Wireshark pada link Knights-Switch 3, selanjutnya membuka console Knights dan jalankan perintah:
@@ -441,7 +442,7 @@ Pada wireshark menerapkan filter icmp dan memeriksa detail Type/Code
 ![img](assets/soal(1)_10.png)</br>
 ![img](assets/soal(2)_10.png)
 Pada hasil diatas menunjukan ICMP Request (Knights -> Chisa): Type = 8 dan Code = 0, sedangkan ICMP Reply (Chisa -> Knights): Type = 0 dan Code = 0 untuk Packetloss nya 0% dari (77 dari 77 paket berhasildibalas) <br>
-**11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.**
+## 11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.
 ### Penyelesaian:
 Pertama-tama kita perlu menjalankan beberapa command pada konsol Node Client Chisa.
 ```bash
@@ -461,7 +462,7 @@ whoami
 ![img](assets/Soal_11-3.png)<br>
 ![img](assets/Soal_11-4.png)
 Hal ini terjadi karena protokol Telnet menggunakan mekanisme Remote Echo, di mana server mengirimkan kembali (echo) setiap karakter yang diketik pengguna agar tampil di layar terminal. Ketika Wireshark menggabungkan alur lalu lintas dua arah ke dalam TCP Stream, karakter asli yang diketik client (merah) bersanding langsung dengan karakter balasan dari server (biru) sehingga huruf terlihat ganda. Sementara pada masukan Password, server sengaja mematikan fitur echo demi keamanan, sehingga hanya data asli dari client yang terekam dan hurufnya tidak mengganda (wired_ghost).<br>
-**12. Alice mencurigai Knights menjalankan beberapa layanan rahasia di node-nya. Lakukan pemindaian port dari node Alice ke node Knights menggunakan Netcat (nc) untuk memeriksa port 22 (SSH) dan 80 (HTTP) dalam keadaan terbuka, serta port rahasia 7777 dalam keadaan tertutup. Analisis di Wireshark perbedaan TCP Flag yang dikembalikan antara port terbuka (SYN-ACK) dengan port tertutup (RST-ACK).**
+## 12. Alice mencurigai Knights menjalankan beberapa layanan rahasia di node-nya. Lakukan pemindaian port dari node Alice ke node Knights menggunakan Netcat (nc) untuk memeriksa port 22 (SSH) dan 80 (HTTP) dalam keadaan terbuka, serta port rahasia 7777 dalam keadaan tertutup. Analisis di Wireshark perbedaan TCP Flag yang dikembalikan antara port terbuka (SYN-ACK) dengan port tertutup (RST-ACK).
 ### Penyelesaian:
 Soal ini bisa diselesaikan dengan mendownload dan menyalakan service pada Node Client Knights terlebih dahulu.
 ```bash
@@ -491,7 +492,7 @@ Analisis:
 - Port terbuka: Port 80 (HTTP). Paket No. 20 - Alice (10.73.1.2) mengirim `[SYN]` ke port 80. Paket No. 21 (Balasan) - Knights(10.73.3.2) membalas dengan `[SYN, ACK]` yang berarti port 80 terbuka dan menerima koleksi.
 - Port tertutup: Port 777. Paket No. 28 - Alice (10.73.1.2) mengirim `[SYN]` ke port 777. Paket No. 29 membalas dengan `[RST, ACK]` yang berarti tertutup atau koneksi ditolak.
 - Port terbuka berwarna hijau, port tertutup berwarna merah.
-**13. Lain memerintahkan agar administrasi jarak jauh menggunakan SSH secara aman tanpa password. Install OpenSSH server pada node Knights, buat pasangan kunci SSH (ssh-keygen) pada node Mika untuk user mika_admin, dan konfigurasikan public key authentication (PasswordAuthentication no). Lakukan koneksi SSH dari node Mika ke node Knights, tangkap sesi menggunakan Wireshark, identifikasi paket Protocol Version Exchange dan Key Exchange, serta jelaskan mengapa kredensial tidak terlihat dalam bentuk teks terbuka seperti pada Telnet.**
+## 13. Lain memerintahkan agar administrasi jarak jauh menggunakan SSH secara aman tanpa password. Install OpenSSH server pada node Knights, buat pasangan kunci SSH (ssh-keygen) pada node Mika untuk user mika_admin, dan konfigurasikan public key authentication (PasswordAuthentication no). Lakukan koneksi SSH dari node Mika ke node Knights, tangkap sesi menggunakan Wireshark, identifikasi paket Protocol Version Exchange dan Key Exchange, serta jelaskan mengapa kredensial tidak terlihat dalam bentuk teks terbuka seperti pada Telnet.
 ### Penyelesaian:
 Soal ini dapat diselesaikan dengan menjalankan beberapa command pada Node Client Knights sebagai berikut:
 ```bash
@@ -566,8 +567,8 @@ ssh -i ~/.ssh/id_rsa mika_admin@10.73.3.2
 
 
 **Fungsi**: Mika dan Knights menyepakati algoritma enkripsi (seperti AES atau ChaCha20-Poly1305) serta melakukan pertukaran kunci simetris (shared secret key) secara aman menggunakan metode Diffie-Hellman tanpa mengirimkan kunci asli melewati jaringan.<br><br>
-**14. Setelah gagal mengakses FTP, Eiri melancarkan serangan brute-force terhadap form login web Alice. Analisis file capture wired_bruteforce.pcapng untuk mengidentifikasi alamat IP penyerang, target IP beserta port yang diserang, password user lain_admin yang berhasil ditembus, serta web server software dan versi yang dilaporkan pada response header. Validasi temuan kalian pada socket server:
-(link file) nc [IP_Group] 3401** 
+
+## 14. Setelah gagal mengakses FTP, Eiri melancarkan serangan brute-force terhadap form login web Alice. Analisis file capture wired_bruteforce.pcapng untuk mengidentifikasi alamat IP penyerang, target IP beserta port yang diserang, password user lain_admin yang berhasil ditembus, serta web server software dan versi yang dilaporkan pada response header. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3401
 ### Penyelesaian:
 Pertama jalankan command berikut di konsol untuk mendapatkan soal
 ```bash
@@ -577,4 +578,56 @@ Kemudian buka file yang terdapat pada drive di Wireshark. Pada wireshark dapat d
 ![img](assets/Soal_14-1.png)<br>
 ![img](assets/Soal_14-3.png)<br>
 ![img](assets/Soal_14-4.png)<br>
-![img](assets/Soal_14-6.png)
+![img](assets/Soal_14-6.png)<br>
+Kemudian bisa didapatkan jawaban ssebagai brikut:
+![img](assets/Soal_14-7.png)
+
+## 15. Eiri menyusup ke ruang server dan memasang perangkat keyboard USB berbahaya pada node Alice. Buka file capture wired_usb_hid.pcap, identifikasi Vendor ID dan Product ID perangkat USB dari deskriptor USB, alamat nomor device USB, serta pesan rahasia yang berhasil dicuri dari keystroke. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3402 
+### Penyelesaian:
+Pertama jalankan command berikut di konsol untuk mendapatkan soal
+```bash
+nc 10.4.89.246 3402
+```
+Kemudian download file dan dan buka file soal no. 15 pada Wireshark. Lakukan beberapa filter pada Wireshark seperti berikut:
+![img](assets/Soal_15-1.png)<br>
+![img](assets/Soal_15-2.png)<br>
+Setelah itu cari password dengan command berikut:
+```
+ & "C:\Program Files\Wireshark\tshark.exe" -r "$env:USERPROFILE\Downloads\soal15_wired_usb_hid.pcap" -Y "usb.capdata" -T fields -e usb.capdata
+```
+Kemudian decode menggunakan `decode_hid.py`
+```py
+import sys
+
+hid_map = {
+    0x04: ('a', 'A'), 0x05: ('b', 'B'), 0x06: ('c', 'C'), 0x07: ('d', 'D'),
+    0x08: ('e', 'E'), 0x09: ('f', 'F'), 0x0a: ('g', 'G'), 0x0b: ('h', 'H'),
+    0x0c: ('i', 'I'), 0x0d: ('j', 'J'), 0x0e: ('k', 'K'), 0x0f: ('l', 'L'),
+    0x10: ('m', 'M'), 0x11: ('n', 'N'), 0x12: ('o', 'O'), 0x13: ('p', 'P'),
+    0x14: ('q', 'Q'), 0x15: ('r', 'R'), 0x16: ('s', 'S'), 0x17: ('t', 'T'),
+    0x18: ('u', 'U'), 0x19: ('v', 'V'), 0x1a: ('w', 'W'), 0x1b: ('x', 'X'),
+    0x1c: ('y', 'Y'), 0x1d: ('z', 'Z'), 0x1e: ('1', '!'), 0x1f: ('2', '@'),
+    0x20: ('3', '#'), 0x21: ('4', '$'), 0x22: ('5', '%'), 0x23: ('6', '^'),
+    0x24: ('7', '&'), 0x25: ('8', '*'), 0x26: ('9', '('), 0x27: ('0', ')'),
+    0x2c: (' ', ' '), 0x2d: ('-', '_'), 0x2e: ('=', '+')
+}
+
+output = []
+for line in sys.stdin:
+    line = line.strip()
+    if not line or len(line) < 6:
+        continue
+    
+    modifier = int(line[0:2], 16)
+    keycode = int(line[4:6], 16)
+    
+    if keycode in hid_map:
+        is_shift = bool(modifier & 0x22)
+        char = hid_map[keycode][1] if is_shift else hid_map[keycode][0]
+        output.append(char)
+
+print("\nHasil Pesan Rahasia: " + "".join(output))
+```
+Didapatkan hasil sebagai berikut
+![img](assets/Soal_15-3.png)<br>
+![img](assets/Soal_15-4.png)<br><br>
