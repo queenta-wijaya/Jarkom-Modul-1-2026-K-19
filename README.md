@@ -5,14 +5,15 @@
 | Ni Putu Maqueenta Wijaya | 5027251004 |
 | Malikha Syafira Dewi | 5027251032 |
 ## Pembahasan Soal Jarkom Modul 1
- **1. Untuk mempersiapkan pembangunan The Wired, Lain yang berperan sebagai Router membuat tiga Switch/Gateway: Switch 1 menuju dua Entitas yaitu Alice dan Mika, Switch 2 menuju Chisa, sedangkan Switch 3 menuju Knights dan Eiri. Kelima Entitas tersebut dikonfigurasi sebagai Client di GNS3.**
+## 1. Untuk mempersiapkan pembangunan The Wired, Lain yang berperan sebagai Router membuat tiga Switch/Gateway: Switch 1 menuju dua Entitas yaitu Alice dan Mika, Switch 2 menuju Chisa, sedangkan Switch 3 menuju Knights dan Eiri. Kelima Entitas tersebut dikonfigurasi sebagai Client di GNS3
 ### Penyelesaian:
 ![img](assets/Soal1.png)<br>
 Menambahkan Router (Alpinet) dengan nama `Lain`, 3 buah switch yang dihubungkan ke router Lain, dan 5 Node (Alpinet) yakni `Alice` dan `Mika` yang terhubung ke switch 1, `Chisa` yang terhubung ke switch 2, dan `Knights` dan `Eiri` yang terhubung ke switch 3.
 <br>
 Masing-masing node dikonfigurasikan sebagai berikut:
 1. Lain
-```
+
+```bash
 auto lo
 iface lo inet loopback
 
@@ -38,7 +39,8 @@ up sysctl -w net.ipv4.ip_forward=1
 ```
 
 2. Alice
-```
+
+```bash
 auto lo
 iface lo inet loopback
 
@@ -50,7 +52,7 @@ iface eth0 inet static
 ```
 
 3. Mika
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -62,7 +64,7 @@ iface eth0 inet static
 ```
 
 4. Chisa
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -74,7 +76,7 @@ iface eth0 inet static
 ```
 
 5. Knights
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -86,7 +88,7 @@ iface eth0 inet static
 ```
 
 6. Eiri
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -97,11 +99,11 @@ iface eth0 inet static
     gateway 10.73.3.1
 ```
 
-**2. Karena menurut Lain pada saat itu The Wired masih terisolasi dari dunia luar, konfigurasikan router Lain agar dapat tersambung langsung ke jaringan internet publik melalui NAT/DHCP pada interface eth0.**
+## 2. Karena menurut Lain pada saat itu The Wired masih terisolasi dari dunia luar, konfigurasikan router Lain agar dapat tersambung langsung ke jaringan internet publik melalui NAT/DHCP pada interface eth0.
 ### Penyelesaian:
 ![img](assets/Soal2.png)<br>
 Menambahkan NAT yang tersambung ke router Lain. Konfigurasi Lain diubah menjadi sebagai berikut:
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -127,11 +129,11 @@ up sysctl -w net.ipv4.ip_forward=1
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ```
 Dan pada masing-masing node seperti Alice, Mika, Chisa, Knights, dan Eiri ditambahkan konfigurasi sebagai berikut agar tidak perlu konfigurasi ulang setiap node dimatikan.
-```
+```bash
 up echo "nameserver 1.1.1.1" > /etc/resolv.conf
 up echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 ```
-**3. Setelah router Lain terhubung ke internet, pastikan seluruh Entitas (Client) di bawah Switch 1, Switch 2, dan Switch 3 dapat saling terhubung dan berkomunikasi satu sama lain melalui konfigurasi routing.**
+## 3. Setelah router Lain terhubung ke internet, pastikan seluruh Entitas (Client) di bawah Switch 1, Switch 2, dan Switch 3 dapat saling terhubung dan berkomunikasi satu sama lain melalui konfigurasi routing
 ### Penyelesaian:
 Soal ini dapat dibuktikan dengan mencoba `ping` ke masing-masing node client. Contoh dari berhasil melakukan ping adalah sebagai berikut:<br>
 Router Lain mencoba ping ke Node Clien Eiri<br>
@@ -139,20 +141,20 @@ Router Lain mencoba ping ke Node Clien Eiri<br>
 Node Client Alice mencoba ping ke Node Clien Chisa<br>
 ![img](assets/Soal3-2.png)<br>
 
-**4. Lain ingin agar setiap Entitas (Client) memiliki kemandirian di The Wired. Konfigurasikan firewall/iptables (NAT Masquerade) dan DNS resolver agar setiap Client dapat terhubung ke internet secara mandiri (dapat melakukan ping ke 8.8.8.8 dan membuka domain web google.com).**
+## 4. Lain ingin agar setiap Entitas (Client) memiliki kemandirian di The Wired. Konfigurasikan firewall/iptables (NAT Masquerade) dan DNS resolver agar setiap Client dapat terhubung ke internet secara mandiri (dapat melakukan ping ke 8.8.8.8 dan membuka domain web google.com).
 ### Penyelesaian:
 Nomor ini bisa diselesaikan dengan mencoba `ping` ke `google.com` dari masing-masing Node Client. Contoh dari berhasil melakukan ping ke `google.com` adalah sebagai berikut:<br>
 Node Client Eiri melakukan ping ke `google.com`<br>
 ![img](assets/Soal_4.png)
 
-**5. Eiri tetap berupaya menanamkan kekacauan ke dalam jaringan. Untuk mengantisipasi restart tiba-tiba, pastikan seluruh konfigurasi jaringan tidak hilang saat semua node di-restart. Buat script verifikasi di /root/cek_status.sh pada router Lain yang menampilkan ringkasan interface (ip -br a) dan status tabel NAT (iptables -t nat -L -v -n) setelah reboot.**
+## 5. Eiri tetap berupaya menanamkan kekacauan ke dalam jaringan. Untuk mengantisipasi restart tiba-tiba, pastikan seluruh konfigurasi jaringan tidak hilang saat semua node di-restart. Buat script verifikasi di /root/cek_status.sh pada router Lain yang menampilkan ringkasan interface (ip -br a) dan status tabel NAT (iptables -t nat -L -v -n) setelah reboot.
 ### Penyelesaian:
 Soal ini diselesaikan dengan membuka konsol Router Lain dan membuat file script `cek_status.sh` pada root sebagai berikut:<br>
-```
+```bash
 nano /root/cek_status.sh
 ```
 kemudian
-```
+```bash
 #!/bin/sh
 echo "=========================================="
 echo "          RINGKASAN INTERFACE             "
@@ -166,20 +168,20 @@ echo "=========================================="
 iptables -t nat -L -v -n
 ```
 Kemudian dijalankan dengan
-```
+```bash
 chmod +x /root/cek_status.sh
 /root/cek_status.sh
 ```
 Hasil dari `cek_status.sh` adalah sebagai berikut:
 ![img](assets/Soal_5.png)<br>
-**6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.
+## 6. Mika mencurigai adanya anomali traffic pada segmen jaringannya. Jalankan generator traffic pada node Mika, lalu lakukan packet sniffing menggunakan Wireshark pada interface node Mika. Terapkan display filter khusus untuk menyaring paket yang berprotokol DNS atau ICMP. Tunjukkan screenshot hasil filter beserta ringkasan paket yang lolos.
 ### Penyeleseian :
 Membuka console nose Mika, lalu buat script:
-```
+```bash
 nano traffic_protocol7.sh
 ```
 kemudian
-```
+```bash
 # ============================================
 # Traffic Generator — Protocol 7 Network
 # Serial Experiments Lain — Modul 1 Jarkom 2026
@@ -209,7 +211,7 @@ echo "[*] Traffic generation complete."
 echo "[*] Check Wireshark for captured packets."
 ```
 menjalankan script dibawah ini sambil melakukan Start Capture di wireshark pada jalur mika 
-```
+```bash
 chmod +x traffic_protocol7.sh
 ./traffic_protocol7.sh
 ```
@@ -219,15 +221,15 @@ Filter `dns or icmm`
 Analisis Protocol Hierarchy
 ![img](assets/soal(2)_6.png)
 Trafik yang tersaring didominasi oleh DNS (90%) hasil dari perintah nslookup dan dig ke berbagai domain (google.com, github.com, its.ac.id, cloudflare.com), dan ICMP (10%) hasil dari perintah ping ke 8.8.8.8 dan 1.1.1.1. Filter gabungan "dns or icmp" berhasil menyaring 40 dari total 22.895 paket yang ter-capture.
-**7. Chisa memutuskan mendirikan FTP Server pada node miliknya dengan shared folder di /var/wired/data. Terapkan kebijakan akses: user alice (hak akses read & write), user mika (dibatasi read-only), dan user eiri (dibatasi tanpa izin akses / blacklist). Buktikan konfigurasi dengan membuat file signal_alice.txt dari user alice, dan buktikan penolakan akses saat user eiri mencoba login.
+## 7. Chisa memutuskan mendirikan FTP Server pada node miliknya dengan shared folder di /var/wired/data. Terapkan kebijakan akses: user alice (hak akses read & write), user mika (dibatasi read-only), dan user eiri (dibatasi tanpa izin akses / blacklist). Buktikan konfigurasi dengan membuat file signal_alice.txt dari user alice, dan buktikan penolakan akses saat user eiri mencoba login.
 ### Penyelesaian: 
 Membuka console di node chisa, setelah itu install `vsftpd` dan membuat direktori shared;
-```
+```bash
 apk update && apk add vsftpd inetutils-ftp
 mkdir -p /var/wired/data
 ```
 selanjutnya membuat akun `alice`, `mika` dan `eiri`:
-```
+```bash
 adduser -D alice
 passwd alice
 
@@ -238,12 +240,12 @@ adduser -D eiri
 passwd eiri
 ```
 membuat kepemilikan direktori shared 
-``` 
+``` bash
 chown -R alice:alice /var/wired/data
 chmod 777 /var/wired/data
 ```
 Membuat file konfigurasi `/etc/vsftpd/vsftpd.conf` menggunakan `cat << 'EOF'`
-```
+```bash
 cat << 'EOF' > /etc/vsftpd/vsftpd.conf
 anonymous_enable=NO
 local_enable=YES
@@ -263,14 +265,14 @@ EOF
 ```
 
 Membuat file `etc/vsftpd/userlist` untuk whitelist user `alice` dan `mika` 
-```
+```bash
 cat << 'EOF' > /etc/vsftpd/userlist
 alice
 mika
 EOF
 ```
 Mengatur hak askes read-only untuk user `mika` via `/etc/vsftpd/user_conf/mika`
-```
+```bash
 mkdir -p /etc/vsftpd/user_conf
 cat << 'EOF' > /etc/vsftpd/user_conf/mika
 write_enable=NO
@@ -279,12 +281,12 @@ EOF
 
 Menjalankan service FTP 
 
-``` 
+``` bash
 vstpd /etc/vstpd/vsftpd.conf &
 ```
 
 Menguji Hak akses menggunakan 
-``` 
+``` bash
 ftp 10.73.2.2
 ```
 Login alice 
@@ -293,14 +295,14 @@ Login mika
 ![img](assets/soal(2)_7.png)
 Login eiri
 ![img](assets/soal(3)_7.png)
-**8. Kelompok rahasia Knights perlu mengirimkan dokumen laporan intelijen ke FTP Server Chisa. Lakukan koneksi FTP client dari node Knights ke FTP Server Chisa menggunakan akun alice. Upload file yang telah disediakan. Analisis sesi Wireshark dan sebutkan: perintah FTP untuk upload (STOR), kode status sukses server (226), dan port data TCP yang dinegosiasikan pada mode PASV.
+## 8. Kelompok rahasia Knights perlu mengirimkan dokumen laporan intelijen ke FTP Server Chisa. Lakukan koneksi FTP client dari node Knights ke FTP Server Chisa menggunakan akun alice. Upload file yang telah disediakan. Analisis sesi Wireshark dan sebutkan: perintah FTP untuk upload (STOR), kode status sukses server (226), dan port data TCP yang dinegosiasikan pada mode PASV.
 ### Penyelesaian:
 Di node Knights, membat file dokumen laporan intelijen:
-```
+```bash
 nano knights_report.txt
 ```
 masukkan isi dari knights_report.txt
-```
+```bash
 ==================================================
   KNIGHTS OF THE EASTERN CALCULUS — STATUS REPORT
   Protocol 7 Surveillance Network
@@ -340,7 +342,7 @@ Knights of the Eastern Calculus
 ```
 Jalankan capture wireshark pada link `Knights`
 Hubungkan ke FTP server Chisa dan ulpad file 
-```
+```bash
 ftp 10.73.2.2
 # Login: alice / Pass: password
 passive
@@ -358,14 +360,14 @@ Respon Server PASV: `227 Entering Passive Mode (10,73,2,2,119,238)`[cite: 1]
 Analisis & Perhitungan Port Data: Dua angka terakhir pada respon PASV merupakan pasangan oktet *High Byte* ($p1$) dan *Low Byte* ($p2$)[cite: 1]. Angka **256** digunakan sebagai faktor pengali karena merupakan batas kapasitas 1 byte ($2^8 = 256$) untuk menggeser posisi *High Byte* ke dalam format port 16-bit sesuai standar RFC 959.
  $$\text{Port Data TCP} = (119 \times 256) + 238 = 30464 + 238 = 30702$$
 Sehingga, transfer data FTP dilakukan melalui port TCP **30702**.
-**9. Mika mengakses dokumen Protokol Tujuh yang telah disediakan dari FTP Server Chisa. Dari node Mika, unduh file tersebut menggunakan akun mika. Setelah itu, buktikan pembatasan read-only dengan mencoba mengunggah file baru dari akun mika, dan tunjukkan pesan error respon server (error 550 Permission denied) saat mika mencoba melakukan upload.
+## 9. Mika mengakses dokumen Protokol Tujuh yang telah disediakan dari FTP Server Chisa. Dari node Mika, unduh file tersebut menggunakan akun mika. Setelah itu, buktikan pembatasan read-only dengan mencoba mengunggah file baru dari akun mika, dan tunjukkan pesan error respon server (error 550 Permission denied) saat mika mencoba melakukan upload.
 ### Penyelesaian: 
 Di Node `Chisa` menyiapkan file `protocol7_manifesto.txt`
-```
+```bash
 nano protocol7_manifesto.txt
 ```
 Isi dari file `protocol7_manifesto.txt`
-```
+```bash
 ==================================================
   PROTOCOL 7 — THE MANIFESTO
   A Declaration of Digital Consciousness
@@ -419,7 +421,7 @@ Choose wisely which door you open to The Wired.
 — Lain Iwakura
 ```
 Dari node mika, login FTP menggunakan akun mika:
-```
+```bash
 ftp 10.73.2.2
 # Login: mika / Pass: password
 passive
@@ -432,7 +434,7 @@ Hasil dari respon wireshark:
 ![img](assets/soal(1)_9.png)
 Proses Download:*cSaat menjalankan perintah download `get protocol7_manifesto.txt` (terdeteksi sebagai perintah FTP `RETR protocol7_manifesto.txt`), server memberikan respon `226 Transfer complete` dengan total file 3479 bytes berhasil diterima[cite: 1].
 Proses Upload (Percobaan): Saat mencoba mengunggah file `put test_mika.txt` (terdeteksi sebagai perintah FTP `STOR test_mika.txt`), server menolak aksi tersebut dengan respon `550 Permission denied.`[cite: 1]. Hal ini membuktikan bahwa kebijakan hak akses untuk user `mika` pada FTP Server Chisa berhasil dikonfigurasi secara *read-only*[cite: 1].
-**10. Knights melancarkan uji ketahanan koneksi ke server Chisa untuk menguji latensi jaringan The Wired. Kirimkan paket ping dari node Knights ke node Chisa dengan payload khusus 128 bytes dan interval 0.3 detik sebanyak 77 paket (ping -c 77 -s 128 -i 0.3 <IP_Chisa>). Buka Wireshark, catat nilai ICMP Type dan Code untuk Echo Request vs Echo Reply, serta analisis packet loss dan RTT (min/avg/max).
+## 10. Knights melancarkan uji ketahanan koneksi ke server Chisa untuk menguji latensi jaringan The Wired. Kirimkan paket ping dari node Knights ke node Chisa dengan payload khusus 128 bytes dan interval 0.3 detik sebanyak 77 paket (ping -c 77 -s 128 -i 0.3 <IP_Chisa>). Buka Wireshark, catat nilai ICMP Type dan Code untuk Echo Request vs Echo Reply, serta analisis packet loss dan RTT (min/avg/max).
 ### Penyelesaian: 
 Memulai packet capture di Wireshark pada link Knights-Switch 3, selanjutnya membuka console Knights dan jalankan perintah:
 ```
@@ -442,7 +444,7 @@ Pada wireshark menerapkan filter icmp dan memeriksa detail Type/Code
 ![img](assets/soal(1)_10.png)</br>
 ![img](assets/soal(2)_10.png)
 Pada hasil diatas menunjukan ICMP Request (Knights -> Chisa): Type = 8 dan Code = 0, sedangkan ICMP Reply (Chisa -> Knights): Type = 0 dan Code = 0 untuk Packetloss nya 0% dari (77 dari 77 paket berhasildibalas)
-**11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.**
+## 11. Buktikan kelemahan protokol Telnet dengan membuat akun phantom_user dan password wired_ghost pada layanan telnetd di node Chisa. Lakukan login Telnet dari node Eiri ke node Chisa dan tangkap sesi menggunakan Wireshark. Tunjukkan kredensial plain text melalui fitur Follow TCP Stream, serta jelaskan mengapa setiap karakter terkirim dalam paket TCP terpisah.
 ### Penyelesaian:
 Pertama-tama kita perlu menjalankan beberapa command pada konsol Node Client Chisa.
 ```bash
@@ -453,7 +455,7 @@ echo "phantom_user:wired_ghost" | chpasswd
 telnetd -F -p 23 &
 ```
 Kemudian kita bisa memilih `Start capture` pada kabel penghubung node Eiri dan switch. Buka konsol Node Client Eiri dan hubungi IP Node Client Chisa.
-```
+```bash
 telnet 10.73.2.2 23
 whoami
 ```
@@ -462,7 +464,7 @@ whoami
 ![img](assets/Soal_11-3.png)<br>
 ![img](assets/Soal_11-4.png)
 Hal ini terjadi karena protokol Telnet menggunakan mekanisme Remote Echo, di mana server mengirimkan kembali (echo) setiap karakter yang diketik pengguna agar tampil di layar terminal. Ketika Wireshark menggabungkan alur lalu lintas dua arah ke dalam TCP Stream, karakter asli yang diketik client (merah) bersanding langsung dengan karakter balasan dari server (biru) sehingga huruf terlihat ganda. Sementara pada masukan Password, server sengaja mematikan fitur echo demi keamanan, sehingga hanya data asli dari client yang terekam dan hurufnya tidak mengganda (wired_ghost).<br>
-**12. Alice mencurigai Knights menjalankan beberapa layanan rahasia di node-nya. Lakukan pemindaian port dari node Alice ke node Knights menggunakan Netcat (nc) untuk memeriksa port 22 (SSH) dan 80 (HTTP) dalam keadaan terbuka, serta port rahasia 7777 dalam keadaan tertutup. Analisis di Wireshark perbedaan TCP Flag yang dikembalikan antara port terbuka (SYN-ACK) dengan port tertutup (RST-ACK).**
+## 12. Alice mencurigai Knights menjalankan beberapa layanan rahasia di node-nya. Lakukan pemindaian port dari node Alice ke node Knights menggunakan Netcat (nc) untuk memeriksa port 22 (SSH) dan 80 (HTTP) dalam keadaan terbuka, serta port rahasia 7777 dalam keadaan tertutup. Analisis di Wireshark perbedaan TCP Flag yang dikembalikan antara port terbuka (SYN-ACK) dengan port tertutup (RST-ACK).
 ### Penyelesaian:
 Soal ini bisa diselesaikan dengan mendownload dan menyalakan service pada Node Client Knights terlebih dahulu.
 ```bash
@@ -492,7 +494,7 @@ Analisis:
 - Port terbuka: Port 80 (HTTP). Paket No. 20 - Alice (10.73.1.2) mengirim `[SYN]` ke port 80. Paket No. 21 (Balasan) - Knights(10.73.3.2) membalas dengan `[SYN, ACK]` yang berarti port 80 terbuka dan menerima koleksi.
 - Port tertutup: Port 777. Paket No. 28 - Alice (10.73.1.2) mengirim `[SYN]` ke port 777. Paket No. 29 membalas dengan `[RST, ACK]` yang berarti tertutup atau koneksi ditolak.
 - Port terbuka berwarna hijau, port tertutup berwarna merah.
-**13. Lain memerintahkan agar administrasi jarak jauh menggunakan SSH secara aman tanpa password. Install OpenSSH server pada node Knights, buat pasangan kunci SSH (ssh-keygen) pada node Mika untuk user mika_admin, dan konfigurasikan public key authentication (PasswordAuthentication no). Lakukan koneksi SSH dari node Mika ke node Knights, tangkap sesi menggunakan Wireshark, identifikasi paket Protocol Version Exchange dan Key Exchange, serta jelaskan mengapa kredensial tidak terlihat dalam bentuk teks terbuka seperti pada Telnet.**
+## 13. Lain memerintahkan agar administrasi jarak jauh menggunakan SSH secara aman tanpa password. Install OpenSSH server pada node Knights, buat pasangan kunci SSH (ssh-keygen) pada node Mika untuk user mika_admin, dan konfigurasikan public key authentication (PasswordAuthentication no). Lakukan koneksi SSH dari node Mika ke node Knights, tangkap sesi menggunakan Wireshark, identifikasi paket Protocol Version Exchange dan Key Exchange, serta jelaskan mengapa kredensial tidak terlihat dalam bentuk teks terbuka seperti pada Telnet.
 ### Penyelesaian:
 Soal ini dapat diselesaikan dengan menjalankan beberapa command pada Node Client Knights sebagai berikut:
 ```bash
@@ -534,7 +536,7 @@ ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -N ""
 cat ~/.ssh/id_rsa.pub
 ```
 Didapatkan public key:
-```
+```bash
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSOp/qYFfiO4bap6PLqVU4Ecbx0554DEHKUgdmUVf/X8TsUDxE011KvwHjj3PPBFVqHjokGWTTyjE69bs6dP2P17nMm0ESYUqTK0S4+yNpCQXxNvwkaH8GjdSKRUnZeVLH1gVt2AESpwaV3b+LoNyaZUikkVH7Qhw0AHOePTW2q/icW3qvaz4H6ZdWffqSFHSHDCVip9W87aBCrkw/ITr2UWcT9gu3poGdPstm//goQs+Ci5OvhH9WD97QA/9DEqIw49oSjFSCjBuN/nwTku0PiY3zYakFSe0IW/kQQYH+x4y6t3N4NDxjzF8JBIgpQr/0Jks+PPX/2meax6T2cjRb root@Mika
 ```
 Kembali lagi ke Node Client Knights dan jalankan
@@ -558,14 +560,17 @@ ssh -i ~/.ssh/id_rsa mika_admin@10.73.3.2
 **Tampilan Kolom Info**:<br>
 - **Client**: `Protocol (SSH-2.0-OpenSSH_10.2)`
 - **Server**: `Protocol (SSH-2.0-OpenSSH_10.2)`
-<br> **Fungsi**: Kedua node (Mika dan Knights) saling menyapa dan memverifikasi bahwa keduanya menggunakan versi protokol yang sama (SSHv2).
+<br>
+ 
+ **Fungsi**: Kedua node (Mika dan Knights) saling menyapa dan memverifikasi bahwa keduanya menggunakan versi protokol yang sama (SSHv2).
 ### Key Exchange (KEX):
 **Paket**: Berada tepat setelah Protocol Version Exchange.<br>
 **Tampilan Kolom Info**:<br>
 - `SSH2_MSG_KEXINIT`
 - `SSH2_MSG_KEX_ECDH_INIT / SSH2_MSG_KEX_ECDH_REPLY`
 <br> **Fungsi**: Mika dan Knights menyepakati algoritma enkripsi (seperti AES atau ChaCha20-Poly1305) serta melakukan pertukaran kunci simetris (shared secret key) secara aman menggunakan metode Diffie-Hellman tanpa mengirimkan kunci asli melewati jaringan.
-**14. Setelah gagal mengakses FTP, Eiri melancarkan serangan brute-force terhadap form login web Alice. Analisis file capture wired_bruteforce.pcapng untuk mengidentifikasi alamat IP penyerang, target IP beserta port yang diserang, password user lain_admin yang berhasil ditembus, serta web server software dan versi yang dilaporkan pada response header. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3401
+
+## 14. Setelah gagal mengakses FTP, Eiri melancarkan serangan brute-force terhadap form login web Alice. Analisis file capture wired_bruteforce.pcapng untuk mengidentifikasi alamat IP penyerang, target IP beserta port yang diserang, password user lain_admin yang berhasil ditembus, serta web server software dan versi yang dilaporkan pada response header. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3401
 ### Penyelesaian:
 Pertama jalankan command berikut di konsol untuk mendapatkan soal
 ```bash
@@ -579,7 +584,7 @@ Kemudian buka file yang terdapat pada drive di Wireshark. Pada wireshark dapat d
 Kemudian bisa didapatkan jawaban ssebagai brikut:
 ![img](assets/Soal_14-7.png)
 
-**15. Eiri menyusup ke ruang server dan memasang perangkat keyboard USB berbahaya pada node Alice. Buka file capture wired_usb_hid.pcap, identifikasi Vendor ID dan Product ID perangkat USB dari deskriptor USB, alamat nomor device USB, serta pesan rahasia yang berhasil dicuri dari keystroke. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3402 
+## 15. Eiri menyusup ke ruang server dan memasang perangkat keyboard USB berbahaya pada node Alice. Buka file capture wired_usb_hid.pcap, identifikasi Vendor ID dan Product ID perangkat USB dari deskriptor USB, alamat nomor device USB, serta pesan rahasia yang berhasil dicuri dari keystroke. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3402 
 ### Penyelesaian:
 Pertama jalankan command berikut di konsol untuk mendapatkan soal
 ```bash
@@ -589,7 +594,7 @@ Kemudian download file dan dan buka file soal no. 15 pada Wireshark. Lakukan beb
 ![img](assets/Soal_15-1.png)<br>
 ![img](assets/Soal_15-2.png)<br>
 Setelah itu cari password dengan command berikut:
-```
+```sh
  & "C:\Program Files\Wireshark\tshark.exe" -r "$env:USERPROFILE\Downloads\soal15_wired_usb_hid.pcap" -Y "usb.capdata" -T fields -e usb.capdata
 ```
 Kemudian decode menggunakan `decode_hid.py`
@@ -628,10 +633,10 @@ print("\nHasil Pesan Rahasia: " + "".join(output))
 Didapatkan hasil sebagai berikut
 ![img](assets/Soal_15-3.png)<br>
 ![img](assets/Soal_15-4.png)<br><br>
-**16. Eiri meletakkan file malware di server. Dari file capture wired_ftp_theft.pcapng, lakukan analisis lalu lintas FTP untuk mengidentifikasi alamat IP server FTP penyerang, banner software FTP yang digunakan, kredensial login penyerang, serta ukuran (size in bytes) dari file malware knights_payload.exe yang diunduh. Validasi temuan kalian pada socket server: nc [IP_Group] 3403.
+## 16. Eiri meletakkan file malware di server. Dari file capture wired_ftp_theft.pcapng, lakukan analisis lalu lintas FTP untuk mengidentifikasi alamat IP server FTP penyerang, banner software FTP yang digunakan, kredensial login penyerang, serta ukuran (size in bytes) dari file malware knights_payload.exe yang diunduh. Validasi temuan kalian pada socket server: nc [IP_Group] 3403.
 ### Penyelesaian
 Membuka file `wired_ftp_theft.pcapng` menggunakan Wireshark, kemudia menerapkan display filter: 
-```
+```bash
 ftp
 ```
 Pada capture ditemukan dua sesi FTP berbeda: sesi pertama menggunakan akun `alice` yang bersifat umpan (decoy) dan tidak berkaitan langsung dengan malware, sedangkan sesi kedua menggunakan akun `knights_agent` yang benar-benar melakukan pengunduhan file malware. Bukti ukuran file ditemukan pada perintah `SIZE` dan `RETR` terhadap `knights_payload.exe`:<br>
@@ -648,16 +653,16 @@ nc 10.4.89.246 3403
 ![img](assets/soal(2)_16.png)<br>
 Flag yang diperoleh: `KOMJAR26{FTP_Th3ft_POVgcYsMLxl0AUQYkic49Wmdi}`
 
-**17. Alice membuat halaman web di node-nya. Eiri memanfaatkan celah untuk mengunduh payload berbahaya ke sistem Alice. Analisis file capture wired_http_c2.pcap untuk mengidentifikasi nama domain (Host) tempat malware diunduh, alamat IP server penyerang, nama file executable malware yang diunduh, serta kode status HTTP yang dikembalikan. Validasi temuan kalian pada socket server: nc [IP_Group] 3404
+## 17. Alice membuat halaman web di node-nya. Eiri memanfaatkan celah untuk mengunduh payload berbahaya ke sistem Alice. Analisis file capture wired_http_c2.pcap untuk mengidentifikasi nama domain (Host) tempat malware diunduh, alamat IP server penyerang, nama file executable malware yang diunduh, serta kode status HTTP yang dikembalikan. Validasi temuan kalian pada socket server: nc [IP_Group] 3404
 ### Penyelesaian
 Membuka file `wired_http_c2.pcap` menggunakan Wireshark, kemudian menerapkan display filter:
-```
+```bash
 http
 ```
 Ditemukan dua sesi HTTP berbeda: traffic normal (halaman web Alice beserta `style.css`) dan traffic mencurigakan berupa permintaan `GET /navi_agent.exe`:<br>
 ![img](assets/soal(1)_17.png)<br>
 Detail request dan response dilihat melalui `Follow → HTTP Stream`:
-```
+```bash
 GET /navi_agent.exe HTTP/1.1
 Host: wired-update.net
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
@@ -682,10 +687,10 @@ nc 10.4.89.246 3404
 ```
 ![img](assets/soal(2)_17.png)<br>
 Flag yang diperoleh: `KOMJAR26{Navi_C2_D0wnl04d_mevweP0KVZWZg8cBWYqZtgHwh}`
-**18. Eiri mengubah taktik penyerangan dengan menanamkan file malware menggunakan protokol file sharing SMB. Analisis file capture wired_smb_transfer.pcapng untuk mengidentifikasi nama protokol jaringan yang dieksploitasi, IP pengirim dan penerima, folder tujuan penyimpanan malware pada sistem korban, serta nama file executable malware yang ditransfer. Validasi temuan kalian pada socket server: nc [IP_Group] 3405
+## 18. Eiri mengubah taktik penyerangan dengan menanamkan file malware menggunakan protokol file sharing SMB. Analisis file capture wired_smb_transfer.pcapng untuk mengidentifikasi nama protokol jaringan yang dieksploitasi, IP pengirim dan penerima, folder tujuan penyimpanan malware pada sistem korban, serta nama file executable malware yang ditransfer. Validasi temuan kalian pada socket server: nc [IP_Group] 3405
 ### Penyelesaian
 Membuka file `wired_smb_transfer.pcapng` menggunakan Wireshark, kemudian menerapkan display filter:
-```
+```bash
 smb2
 ```
 Ditelusuri urutan operasi SMB2 mulai dari Negotiate Protocol, Session Setup, Tree Connect, hingga Create Request dan Write Request:<br>
@@ -702,7 +707,7 @@ nc 10.4.89.246 3405
 ```
 ![img](assets/soal(2)_18.png)<br>
 Flag yang diperoleh: `KOMJAR26{SMB_Tr4nsf3r_ABGxWa6A4YGXM0fMJVk4e9zMm}`
-**19. Eiri meneror jaringan dengan mengirimkan email pemerasan melalui protokol SMTP tanpa enkripsi. Analisis file capture wired_smtp_threat.pcap pada stream TCP terkait, identifikasi alamat email korban yang ditargetkan, password korban yang diklaim bocor oleh penyerang, jenis malware yang diinfeksikan, batas waktu (dalam hari) yang diberikan, serta MailClientID yang tercantum pada pesan. Validasi temuan kalian pada socket server: nc [IP_Group] 3406
+## 19. Eiri meneror jaringan dengan mengirimkan email pemerasan melalui protokol SMTP tanpa enkripsi. Analisis file capture wired_smtp_threat.pcap pada stream TCP terkait, identifikasi alamat email korban yang ditargetkan, password korban yang diklaim bocor oleh penyerang, jenis malware yang diinfeksikan, batas waktu (dalam hari) yang diberikan, serta MailClientID yang tercantum pada pesan. Validasi temuan kalian pada socket server: nc [IP_Group] 3406
 ### Penyelesaian
 Membuka file `wired_smtp_threat.pcap` menggunakan Wireshark, kemudian menerapkan display filter:
 ```
@@ -722,22 +727,22 @@ nc 10.4.89.246 3406
 ```
 ![img](assets/soal(2)_19.png)<br>
 Flag yang diperoleh: `KOMJAR26{SMTP_Ext0rt10n_vGZjtLTkhwp8q00Lz5n35qb6k}`
-**20. nMembuka file `wired_tls_decrypt.pcapng` menggunakan Wireshark. Sebelum dianalisis, terlebih dahulu dilakukan konfigurasi TLS decryption melalui `Edit → Preferences → Protocols → TLS`, kemudian mengisi field **"(Pre)-Master-Secret log filename"** dengan file `keyslogfile.txt` yang telah disediakan.
+## 20. Membuka file `wired_tls_decrypt.pcapng` menggunakan Wireshark. Sebelum dianalisis, terlebih dahulu dilakukan konfigurasi TLS decryption melalui `Edit → Preferences → Protocols → TLS`, kemudian mengisi field **"(Pre)-Master-Secret log filename"** dengan file `keyslogfile.txt` yang telah disediakan.
  
 Setelah keylog diterapkan, seluruh sesi TLS pada stream ini difilter menggunakan:
-```
+```bash
 tls
 ```
 ![img](assets/soal(1)_20.png)<br>
 Terlihat urutan TLS handshake lengkap (`Client Hello (SNI=example.com)`, `Server Hello`, `Certificate`, `Client Key Exchange`, `Change Cipher Spec`), diikuti oleh paket `Application Data` yang semula terenkripsi namun berhasil didekripsi menjadi paket **HTTP** yang dapat dibaca langsung pada paket No. 6 dan No. 7:
-```
+```bash
 6   HTTP   HEAD / HTTP/1.1
 7   HTTP   HTTP/1.1 200 OK
 ```
 Keberhasilan dekripsi juga dapat dikonfirmasi melalui tab **"Decrypted TLS"** yang muncul pada panel detail paket (di samping tab "Packet"), menandakan Wireshark berhasil membaca isi asli data yang terenkripsi menggunakan kunci sesi dari `keyslogfile.txt`.
  
 Detail lengkap request dan response dilihat melalui `Follow → HTTP Stream` pada paket No. 6:
-```
+```bash
 HEAD / HTTP/1.1
 Host: example.com
 User-Agent: curl/7.62.0
@@ -759,3 +764,35 @@ nc 10.4.89.246 3407
 ```
 ![img](assets/soal(2)_20.png)<br>
 Flag yang diperoleh: `KOMJAR26{TLS_D3crypt_xUpIVuEYjQUsJMunWmR7sPj2k}`
+
+# Revisi
+## Soal No. 11
+![img](assets/revisi/Soal_11-1.png)<br>
+![img](assets/revisi/Soal_11-2.png)<br>
+![img](assets/revisi/Soal_11-3.png)<br>
+**Kendala yang dialami selama demo**: Tidak bisa login ke `phantom_user`<br>
+
+**Solusi**: Ada error di Node, setelah semua Node dimatikan, GNS3 ditutup dan dibuka ulang, serta melakukan konfigurasi ulang, Node Client Chisa bisa login ke `phantom_user`.
+
+## Soal No. 12
+![img](assets/revisi/Soal_12-1.png)<br>
+![img](assets/revisi/Soal_12-2.png)<br>
+**Kendala yang dialami selama demo**: Tidak bisa melakukan netcat ke IP `10.73.3.2`<br>
+
+**Solusi**: Ada error di Node, setelah semua Node dimatikan, GNS3 ditutup dan dibuka ulang, serta melakukan konfigurasi ulang, Node Client Alice bisa melakukan netcat dengan hasil sebagai berikut:
+```bash
+Alice:~# nc -zv -w 2 10.73.3.2 22
+Connection to 10.73.3.2 22 port [tcp/ssh] succeeded!
+Alice:~# nc -zv -w 2 10.73.3.2 80
+Connection to 10.73.3.2 80 port [tcp/http] succeeded!
+Alice:~# nc -zv -w 2 10.73.3.2 7777
+nc: connect to 10.73.3.2 port 7777 (tcp) failed: Connection refused
+```
+
+## Soal No. 13
+![img](assets/revisi/Soal_13-1.png)<br>
+![img](assets/revisi/Soal_13-2.png)<br>
+![img](assets/revisi/Soal_13-3.png)<br>
+**Kendala yang dialami selama demo**: Mika tidak bisa login ke Knights<br>
+
+**Solusi**: Ada error di Node, setelah semua Node dimatikan, GNS3 ditutup dan dibuka ulang, serta melakukan konfigurasi ulang, Node Client Mika bisa login ke user Knights.
