@@ -243,7 +243,7 @@ chown -R alice:alice /var/wired/data
 chmod 777 /var/wired/data
 ```
 Membuat file konfigurasi `/etc/vsftpd/vsftpd.conf` menggunakan `cat << 'EOF'`
-````
+```
 cat << 'EOF' > /etc/vsftpd/vsftpd.conf
 anonymous_enable=NO
 local_enable=YES
